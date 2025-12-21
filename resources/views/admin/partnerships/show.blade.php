@@ -10,8 +10,21 @@
         </a>
     </div>
 
+    {{-- Alert --}}
+    @if(session('success'))
+        <div class="alert alert-success rounded-4 border-0 shadow-sm">
+            <i class="bi bi-check-circle me-1"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger rounded-4 border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-1"></i> {{ session('error') }}
+        </div>
+    @endif
+
     {{-- Card Proposal --}}
     <div class="card border-0 rounded-4 glass-card shadow-lg p-4 p-md-5 animate__animated animate__fadeIn">
+
         {{-- Header --}}
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
@@ -47,32 +60,48 @@
             <h5 class="fw-semibold mb-2">
                 <i class="bi bi-diagram-3 me-2 text-primary"></i>Jenis Kerjasama
             </h5>
-            <p class="fs-6 text-dark ps-1">
+            <p class="fs-6 text-dark ps-1 mb-2">
                 {{ $proposal->cooperation_type ?? '— Tidak Diketahui —' }}
             </p>
+
+            {{-- Jenis Kerjasama (List) --}}
+            @if(!empty($proposal->jenis_kerjasama))
+                <div class="text-muted">
+                    <i class="bi bi-tag me-1"></i> {{ $proposal->jenis_kerjasama }}
+                </div>
+            @endif
         </div>
 
         {{-- Ringkasan Proposal --}}
         <div class="mb-4">
-            <h5 class="fw-semibold mb-2"><i class="bi bi-file-text me-2 text-primary"></i>Ringkasan Proposal</h5>
-            <p class="text-dark lh-lg">{{ $proposal->proposal_summary }}</p>
+            <h5 class="fw-semibold mb-2">
+                <i class="bi bi-file-text me-2 text-primary"></i>Ringkasan Proposal
+            </h5>
+            <p class="text-dark lh-lg mb-0">{{ $proposal->proposal_summary }}</p>
         </div>
 
         {{-- Dokumen --}}
-        @if($proposal->document_path)
         <div class="mt-4">
-            <h6 class="fw-semibold mb-2"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Dokumen Proposal</h6>
-            <a href="{{ asset('storage/'.$proposal->document_path) }}" target="_blank"
-               class="btn btn-gradient px-4 py-2 rounded-pill">
-                <i class="bi bi-download me-1"></i> Unduh Dokumen
-            </a>
+            <h6 class="fw-semibold mb-2">
+                <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Dokumen Proposal
+            </h6>
+
+            @if($proposal->document_path)
+                {{-- ✅ PENTING: Download via route controller (bukan asset storage) --}}
+                <a href="{{ route('admin.partnerships.download', $proposal->id) }}"
+                   class="btn btn-gradient px-4 py-2 rounded-pill">
+                    <i class="bi bi-download me-1"></i> Unduh Dokumen
+                </a>
+            @else
+                <div class="text-muted fst-italic">Tidak ada dokumen yang diunggah.</div>
+            @endif
         </div>
-        @endif
 
         {{-- Footer --}}
         <div class="mt-5 text-muted small">
-            <i class="bi bi-clock-history me-1"></i> Diperbarui {{ $proposal->updated_at->diffForHumans() }}
+            <i class="bi bi-clock-history me-1"></i> Diperbarui {{ optional($proposal->updated_at)->diffForHumans() }}
         </div>
+
     </div>
 </div>
 

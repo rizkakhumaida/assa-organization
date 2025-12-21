@@ -2,200 +2,172 @@
 
 @section('content')
 <style>
-  /* ASSA Design System */
-  .assa-blue { color: #1E3A8A; }
-  .bg-assa-blue { background-color: #1E3A8A; }
-
-  .gradient-bg {
-    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+  /* ===== ASSA Premium UI ===== */
+  :root{
+    --assa-primary:#1E3A8A;
+    --assa-secondary:#3B82F6;
+    --assa-soft:#EEF2FF;
+    --assa-muted:#6B7280;
   }
 
-  .card-hover {
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
+  body{
+    background: linear-gradient(135deg,#EEF2FF 0%,#F8FAFC 100%);
   }
 
-  .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  /* Utilities */
+  .assa-blue{color:var(--assa-primary)}
+  .bg-assa{background:linear-gradient(135deg,var(--assa-primary),var(--assa-secondary))}
+  .rounded-2xl{border-radius:1.25rem}
+  .rounded-xl{border-radius:0.9rem}
+  .glass{
+    background:rgba(255,255,255,.85);
+    backdrop-filter:blur(14px);
+  }
+  .hover-lift{
+    transition:.35s ease;
+  }
+  .hover-lift:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
   }
 
-  .rounded-2xl { border-radius: 1rem; }
-  .rounded-xl { border-radius: 0.75rem; }
-  .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+  /* Buttons */
+  .btn-assa{
+    background:linear-gradient(135deg,var(--assa-primary),var(--assa-secondary));
+    color:#fff;
+    border:none;
+    border-radius:.75rem;
+    padding:.55rem 1.1rem;
+    font-weight:600;
+  }
+  .btn-assa:hover{color:#fff;box-shadow:0 10px 25px rgba(30,58,138,.45)}
 
-  .badge-rounded {
-    border-radius: 0.75rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+  /* Badges */
+  .badge-soft{
+    border-radius:999px;
+    padding:.45rem .9rem;
+    font-weight:600;
+    font-size:.8rem;
   }
 
-  .btn-assa {
-    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
-    border: none;
-    color: white;
-    font-weight: 600;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    transition: all 0.3s ease;
+  /* Hero */
+  .hero{
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at top right,rgba(255,255,255,.25),transparent 60%);
   }
 
-  .btn-assa:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
-    color: white;
+  /* Avatar */
+  .avatar{
+    width:44px;height:44px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;
+    background:linear-gradient(135deg,var(--assa-primary),var(--assa-secondary));
   }
-
-  .text-xs { font-size: 0.75rem; }
-  .text-sm { font-size: 0.875rem; }
 </style>
 
-<div class="container-fluid p-0">
-  {{-- Navigation --}}
-  <div class="row mb-4">
-    <div class="col-12">
-      <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left me-2"></i>Kembali
-      </a>
-    </div>
+<div class="container-fluid py-3">
+
+  <!-- Back Button -->
+  <div class="mb-3">
+    <a href="{{ url()->previous() }}" class="btn btn-light rounded-xl shadow-sm">
+      <i class="fas fa-arrow-left me-2"></i>Kembali
+    </a>
   </div>
 
-  {{-- Activity Detail Hero --}}
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="bg-white rounded-2xl shadow-lg border card-hover">
-        <div class="p-4">
-          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-            <div class="flex-fill">
-              <h1 class="h3 fw-bold assa-blue mb-3">{{ $activity->title }}</h1>
-              <div class="row g-3 mb-3">
-                <div class="col-auto">
-                  <div class="d-flex align-items-center text-muted text-sm">
-                    <i class="fas fa-map-marker-alt me-2 assa-blue"></i>
-                    <span>{{ $activity->location ?? '-' }}</span>
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <div class="d-flex align-items-center text-muted text-sm">
-                    <i class="fas fa-calendar me-2 assa-blue"></i>
-                    <span>
-                      {{ optional($activity->start_at)->format('d M Y H:i') ?? '-' }}
-                      @if($activity->end_at)
-                        – {{ optional($activity->end_at)->format('d M Y H:i') }}
-                      @endif
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <!-- HERO HEADER -->
+  <div class="hero bg-assa text-white rounded-2xl shadow-lg mb-4">
+    <div class="p-4 position-relative">
+      <h2 class="fw-bold mb-2">{{ $activity->title }}</h2>
+      <div class="d-flex flex-wrap gap-3 small opacity-90">
+        <span><i class="fas fa-map-marker-alt me-1"></i>{{ $activity->location ?? '-' }}</span>
+        <span><i class="fas fa-calendar-alt me-1"></i>
+          {{ optional($activity->start_at)->format('d M Y H:i') ?? '-' }}
+          @if($activity->end_at) – {{ optional($activity->end_at)->format('d M Y H:i') }} @endif
+        </span>
+      </div>
 
-            @php
-              $isSoon = $activity->start_at && $activity->start_at->isFuture();
-            @endphp
-            <div class="text-center">
-              @if($isSoon)
-                <span class="badge-rounded" style="background-color: #dbeafe; color: #1e40af;">
-                  🚀 Akan berlangsung
-                </span>
-              @else
-                <span class="badge-rounded" style="background-color: #f3f4f6; color: #6b7280;">
-                  ✅ Selesai/berjalan
-                </span>
-              @endif
-            </div>
-          </div>
-
-          <div class="border-top pt-4">
-            <h5 class="fw-bold assa-blue mb-3">
-              <i class="fas fa-info-circle me-2"></i>Deskripsi Kegiatan
-            </h5>
-            <p class="text-muted mb-0" style="line-height: 1.6;">
-              {{ $activity->description ?: 'Tidak ada deskripsi.' }}
-            </p>
-          </div>
-
-          @if(isset($activity->participants) && $activity->participants->count() > 0)
-            <div class="border-top pt-4 mt-4">
-              <h5 class="fw-bold assa-blue mb-3">
-                <i class="fas fa-users me-2"></i>Peserta Terdaftar ({{ $activity->participants->count() }})
-              </h5>
-              <div class="row g-3">
-                @foreach($activity->participants->take(10) as $participant)
-                  <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 rounded-xl" style="background-color: #f8fafc;">
-                      <div class="d-flex align-items-center justify-content-center rounded-circle me-3"
-                           style="width: 40px; height: 40px; background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white; font-weight: bold;">
-                        {{ strtoupper(substr($participant->name, 0, 2)) }}
-                      </div>
-                      <div>
-                        <h6 class="fw-bold mb-0 text-sm">{{ $participant->name }}</h6>
-                        <p class="text-muted text-xs mb-0">{{ $participant->email }}</p>
-                        <span class="badge-rounded mt-1" style="background-color: #dcfce7; color: #166534; font-size: 0.7rem;">
-                          {{ ucfirst($participant->pivot->status ?? 'registered') }}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                @endforeach
-              </div>
-
-              @if($activity->participants->count() > 10)
-                <div class="text-center mt-3">
-                  <small class="text-muted">Dan {{ $activity->participants->count() - 10 }} peserta lainnya...</small>
-                </div>
-              @endif
-            </div>
-          @endif
-        </div>
+      @php $isSoon = $activity->start_at && $activity->start_at->isFuture(); @endphp
+      <div class="mt-3">
+        @if($isSoon)
+          <span class="badge-soft" style="background:#DBEAFE;color:#1E40AF">🚀 Akan Berlangsung</span>
+        @else
+          <span class="badge-soft" style="background:#DCFCE7;color:#166534">✅ Selesai / Berjalan</span>
+        @endif
       </div>
     </div>
   </div>
 
-  {{-- Related Activities --}}
-  @if(($related ?? collect())->count())
-    <div class="row">
-      <div class="col-12">
-        <div class="bg-white rounded-2xl shadow-lg border card-hover">
-          <div class="p-4">
-            <h5 class="fw-bold assa-blue mb-4">
-              <i class="fas fa-calendar-alt me-2"></i>Kegiatan Lainnya
-            </h5>
-            <div class="row g-3">
-              @foreach($related as $act)
-                <div class="col-md-6 col-xl-4">
-                  <div class="card h-100 border-0 rounded-xl card-hover" style="background-color: #f8fafc;">
-                    <div class="card-body p-3">
-                      <h6 class="card-title mb-2 fw-bold">
-                        <a href="{{ route('admin.activities.show', $act->id) }}" class="text-decoration-none assa-blue">
-                          {{ $act->title }}
-                        </a>
-                      </h6>
-                      <div class="mb-2">
-                        <p class="text-muted text-xs mb-1">
-                          <i class="fas fa-map-marker-alt me-1"></i>{{ $act->location ?? '-' }}
-                        </p>
-                        <p class="text-muted text-xs mb-0">
-                          <i class="fas fa-calendar me-1"></i>{{ optional($act->start_at)->format('d M Y H:i') ?? '-' }}
-                        </p>
-                      </div>
-                      <p class="mb-0 text-sm text-muted">
-                        {{ \Illuminate\Support\Str::limit($act->description, 90) }}
-                      </p>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pt-0 text-end">
-                      <a href="{{ route('admin.activities.show', $act->id) }}" class="btn btn-assa btn-sm">
-                        Detail <i class="fas fa-arrow-right ms-1"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              @endforeach
+  <!-- CONTENT CARD -->
+  <div class="glass rounded-2xl shadow-lg p-4 mb-4 hover-lift">
+    <h5 class="fw-bold assa-blue mb-3"><i class="fas fa-info-circle me-2"></i>Deskripsi Kegiatan</h5>
+    <p class="text-muted" style="line-height:1.8">{{ $activity->description ?: 'Tidak ada deskripsi.' }}</p>
+  </div>
+
+  <!-- PARTICIPANTS -->
+  @if(isset($activity->participants) && $activity->participants->count())
+    <div class="glass rounded-2xl shadow-lg p-4 mb-4">
+      <h5 class="fw-bold assa-blue mb-4"><i class="fas fa-users me-2"></i>Peserta ({{ $activity->participants->count() }})</h5>
+      <div class="row g-3">
+        @foreach($activity->participants->take(12) as $participant)
+          <div class="col-md-6 col-xl-4">
+            <div class="d-flex align-items-center gap-3 p-3 rounded-xl bg-white shadow-sm hover-lift">
+              <div class="avatar">{{ strtoupper(substr($participant->name,0,2)) }}</div>
+              <div class="flex-fill">
+                <div class="fw-semibold">{{ $participant->name }}</div>
+                <div class="text-muted small">{{ $participant->email }}</div>
+                <span class="badge-soft mt-1 d-inline-block" style="background:#EEF2FF;color:#1E3A8A">
+                  {{ ucfirst($participant->pivot->status ?? 'registered') }}
+                </span>
+              </div>
             </div>
           </div>
+        @endforeach
+      </div>
+
+      @if($activity->participants->count() > 12)
+        <div class="text-center text-muted small mt-3">
+          +{{ $activity->participants->count() - 12 }} peserta lainnya
         </div>
+      @endif
+    </div>
+  @endif
+
+  <!-- RELATED ACTIVITIES -->
+  @if(($related ?? collect())->count())
+    <div class="glass rounded-2xl shadow-lg p-4">
+      <h5 class="fw-bold assa-blue mb-4"><i class="fas fa-calendar-alt me-2"></i>Kegiatan Lainnya</h5>
+      <div class="row g-3">
+        @foreach($related as $act)
+          <div class="col-md-6 col-xl-4">
+            <div class="h-100 p-3 rounded-xl bg-white shadow-sm hover-lift">
+              <h6 class="fw-bold mb-1">
+                <a href="{{ route('admin.activities.show',$act->id) }}" class="assa-blue text-decoration-none">
+                  {{ $act->title }}
+                </a>
+              </h6>
+              <div class="text-muted small mb-2">
+                <div><i class="fas fa-map-marker-alt me-1"></i>{{ $act->location ?? '-' }}</div>
+                <div><i class="fas fa-clock me-1"></i>{{ optional($act->start_at)->format('d M Y H:i') }}</div>
+              </div>
+              <p class="text-muted small">{{ \Illuminate\Support\Str::limit($act->description,90) }}</p>
+              <div class="text-end">
+                <a href="{{ route('admin.activities.show',$act->id) }}" class="btn btn-assa btn-sm">
+                  Detail <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        @endforeach
       </div>
     </div>
   @endif
+
 </div>
 @endsection

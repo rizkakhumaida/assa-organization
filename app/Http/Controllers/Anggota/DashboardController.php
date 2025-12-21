@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Activity;
+use App\Models\Achievement;
+
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -14,23 +16,61 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ Check if user is authenticated
+        // ✅ Pastikan user login
         if (!$user) {
             return redirect()->route('login');
         }
 
-        // ✅ Menggunakan relationship activities
-        $userActivities = $user->activities()->latest()->limit(5)->get();
+        /**
+         * =========================
+         * DATA KEGIATAN USER
+         * =========================
+         */
+        $userActivities = $user->activities()
+            ->withPivot('status', 'registered_at')
+            ->orderByDesc('start_at')
+            ->limit(5)
+            ->get();
 
-        // ✅ Statistik kegiatan - fix field name dari 'date' ke 'start_at'
+        /**
+         * =========================
+         * STATISTIK KEGIATAN
+         * =========================
+         */
+        $totalActivities = $user->activities()->count();
+
+        $attendedActivities = $user->activities()
+            ->wherePivot('status', 'attended')
+            ->count();
+
+        $upcomingActivities = $user->activities()
+            ->where('start_at', '>', now())
+            ->count();
+
+        /**
+         * =========================
+         * STATISTIK PRESTASI
+         * =========================
+         * (Dari tabel penyetoran prestasi)
+         */
+        $totalPrestasi = Achievement::where('user_id', $user->id)->count();
+
+        /**
+         * =========================
+         * FINAL STATS ARRAY
+         * =========================
+         */
         $stats = [
-            'total_activities' => $user->activities()->count(),
-            'attended_activities' => $user->activities()->wherePivot('status', 'attended')->count(),
-            'upcoming_activities' => Activity::where('start_at', '>', now())->whereHas('participants', function($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->count(),
+            'total_activities'   => $totalActivities,
+            'attended_activities'=> $attendedActivities,
+            'upcoming_activities'=> $upcomingActivities,
+            'total_prestasi'     => $totalPrestasi,
         ];
 
-        return view('anggota.dashboard', compact('userActivities', 'stats'));
+        return view('anggota.dashboard', compact(
+            'userActivities',
+            'stats',
+            'totalPrestasi'
+        ));
     }
 }

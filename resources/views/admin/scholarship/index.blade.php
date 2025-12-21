@@ -2,300 +2,343 @@
 
 @section('content')
 <style>
-    /* 🌌 GLOBAL THEME */
-    body {
-        background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 50%, #f1f5f9 100%);
+    body{
+        background: radial-gradient(1200px 600px at 10% 0%, #dbeafe 0%, transparent 60%),
+                    radial-gradient(900px 500px at 90% 20%, #e0f2fe 0%, transparent 55%),
+                    linear-gradient(135deg, #f1f5f9, #eef2ff);
         font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
     }
 
-    /* ✨ HEADER TITLE */
-    .gradient-title {
-        background: linear-gradient(90deg, #2563eb, #0ea5e9);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-shadow: 0 2px 10px rgba(37,99,235,0.3);
-    }
-
-    /* 💎 CARD GLASS EFFECT */
-    .card-glass {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(18px);
-        border-radius: 1.25rem;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        transition: all 0.4s ease;
-        overflow: hidden;
-    }
-    .card-glass:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
-    }
-
-    /* 🌈 TABLE STYLING */
-    .table thead {
-        background: linear-gradient(90deg, #2563eb, #0ea5e9);
+    .page-header{
+        background: linear-gradient(90deg, #1e40af, #2563eb);
+        border-radius: 16px;
+        padding: 18px 22px;
         color: #fff;
+        box-shadow: 0 12px 30px rgba(37,99,235,.30);
+    }
+    .page-header h4{ margin:0; font-weight:800; letter-spacing:.2px; }
+    .page-header small{ opacity:.9; font-size:.85rem; }
+
+    .glass{
+        background: rgba(255,255,255,.88);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,.45);
+        border-radius: 18px;
+        box-shadow: 0 14px 40px rgba(2,6,23,.08);
+    }
+    .stat-card{
+        padding: 14px 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(148,163,184,.25);
+        background: rgba(255,255,255,.85);
+    }
+    .stat-title{ font-size:.85rem; color:#475569; margin:0; }
+    .stat-value{ font-size:1.4rem; font-weight:800; margin:0; color:#0f172a; }
+    .stat-chip{
+        font-size:.75rem;
+        padding:.35rem .6rem;
+        border-radius: 999px;
+        background: #eef2ff;
+        color:#3730a3;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-    .table tbody tr {
-        transition: all 0.3s ease;
-    }
-    .table tbody tr:hover {
-        background-color: rgba(37, 99, 235, 0.08);
-        transform: scale(1.005);
     }
 
-    /* 🏷️ BADGE STYLE */
-    .badge {
-        font-size: 0.85rem;
-        padding: 0.45em 0.75em;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    .table-wrap{ border-radius: 16px; overflow: hidden; }
+    .table thead th{
+        font-size:.85rem;
+        letter-spacing:.2px;
+        color:#0f172a;
+        background: #eff6ff;
+        border-bottom: 1px solid #dbeafe;
+        padding: 14px 14px;
+        white-space: nowrap;
     }
-    .badge.bg-success { background: linear-gradient(90deg, #16a34a, #22c55e); }
-    .badge.bg-danger { background: linear-gradient(90deg, #dc2626, #ef4444); }
-    .badge.bg-warning { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #000; }
-    .badge.bg-secondary { background: linear-gradient(90deg, #6b7280, #9ca3af); }
+    .table tbody td{
+        padding: 14px 14px;
+        border-color: #eef2f7;
+        vertical-align: middle;
+        color:#0f172a;
+    }
+    .table tbody tr:hover{
+        background: #f8fafc;
+    }
+    .muted{ color:#64748b; font-size:.9rem; }
 
-    /* 🎯 BUTTON STYLE */
-    .btn-custom {
-        border-radius: 10px;
-        transition: all 0.25s ease-in-out;
-        font-weight: 500;
+    .badge-soft{
+        padding:.45rem .65rem;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size:.78rem;
+        letter-spacing:.2px;
+        border: 1px solid transparent;
     }
-    .btn-custom:hover {
-        transform: translateY(-2px);
+    .st-approved{ background: rgba(34,197,94,.12); color:#166534; border-color: rgba(34,197,94,.25); }
+    .st-rejected{ background: rgba(239,68,68,.12); color:#7f1d1d; border-color: rgba(239,68,68,.25); }
+    .st-hold{ background: rgba(245,158,11,.14); color:#7c2d12; border-color: rgba(245,158,11,.28); }
+    .st-pending{ background: rgba(100,116,139,.12); color:#0f172a; border-color: rgba(100,116,139,.22); }
+
+    .control{
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        padding: .65rem .85rem;
+        background: rgba(255,255,255,.9);
     }
-    .btn-outline-primary {
-        border-color: #2563eb;
-        color: #2563eb;
-    }
-    .btn-outline-primary:hover {
-        background: linear-gradient(90deg, #2563eb, #0ea5e9);
-        color: white;
-        border: none;
-        box-shadow: 0 0 10px rgba(37,99,235,0.4);
-    }
-    .btn-info {
-        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-        border: none;
-    }
-    .btn-danger {
-        background: linear-gradient(90deg, #dc2626, #ef4444);
-        border: none;
-    }
-    .btn-outline-danger {
-        border-color: #ef4444;
-        color: #dc2626;
-    }
-    .btn-outline-danger:hover {
-        background: linear-gradient(90deg, #dc2626, #ef4444);
-        color: white;
-        border: none;
-    }
-    .btn-outline-success {
-        border-color: #16a34a;
-        color: #16a34a;
-    }
-    .btn-outline-success:hover {
-        background: linear-gradient(90deg, #16a34a, #22c55e);
-        color: white;
-        border: none;
+    .control:focus{
+        outline: none;
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 .2rem rgba(59,130,246,.15);
     }
 
-    /* 🌀 ANIMATION */
-    .fade-in {
-        animation: fadeIn 0.7s ease-in-out;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 📱 PAGINATION */
-    .page-link {
-        border-radius: 10px !important;
-        color: #2563eb !important;
-        transition: 0.3s;
-    }
-    .page-link:hover {
-        background: rgba(37,99,235,0.1);
-    }
-    .page-item.active .page-link {
-        background: linear-gradient(90deg, #2563eb, #0ea5e9) !important;
-        border: none;
-        color: #fff !important;
-        box-shadow: 0 0 10px rgba(37,99,235,0.4);
-    }
-
-    /* 🌙 DARK MODE TOGGLE */
-    .dark-mode {
-        background: linear-gradient(135deg, #0f172a, #1e293b, #334155) !important;
-        color: #e2e8f0;
-    }
-    .dark-mode .card-glass {
-        background: rgba(30, 41, 59, 0.85);
-        color: #e2e8f0;
-    }
-    .dark-mode .table thead {
-        background: linear-gradient(90deg, #1d4ed8, #2563eb);
-    }
-    .dark-mode .table tbody tr:hover {
-        background: rgba(59,130,246,0.15);
+    .btn-icon{
+        width: 38px; height: 38px;
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        border-radius: 12px;
     }
 </style>
 
-<div class="container py-5 fade-in">
+@php
+    // NORMALISASI STATUS: agar "Approved", "approved", "APPROVED" semuanya dianggap sama
+    $norm = fn($s) => strtolower(trim($s ?? 'pending'));
 
-    {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h2 class="fw-bold gradient-title mb-0">
-            <i class="bi bi-mortarboard-fill me-2"></i> Daftar Pendaftar Beasiswa
-        </h2>
-        <div class="d-flex gap-2">
-            <button id="themeToggle" class="btn btn-outline-primary btn-custom px-3">
-                <i class="bi bi-moon-stars me-1"></i> Tema
-            </button>
-            <a href="{{ url()->previous() }}" class="btn btn-outline-primary btn-custom px-3">
-                <i class="bi bi-arrow-left-circle me-1"></i> Kembali
-            </a>
+    $countApproved = $applications->filter(fn($a) => $norm($a->status) === 'approved')->count();
+    $countRejected = $applications->filter(fn($a) => $norm($a->status) === 'rejected')->count();
+    $countHold     = $applications->filter(fn($a) => $norm($a->status) === 'on hold')->count();
+    $countPending  = $applications->filter(fn($a) => !in_array($norm($a->status), ['approved','rejected','on hold'], true))->count();
+@endphp
+
+<div class="container py-5">
+
+    <div class="page-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-white bg-opacity-25 p-2 rounded-circle">
+                <i class="bi bi-mortarboard-fill fs-5"></i>
+            </div>
+            <div>
+                <h4>Daftar Pendaftar Beasiswa</h4>
+                <small>Kelola pengajuan, tinjau dokumen, dan lakukan verifikasi status</small>
+            </div>
         </div>
-    </div>
 
-    {{-- 🔽 TOMBOL EXPORT --}}
-    <div class="d-flex justify-content-end mb-3 gap-2">
-        <a href="{{ route('admin.scholarship.export.pdf') }}"
-           class="btn btn-outline-danger btn-custom px-3">
-            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF
-        </a>
-        <a href="{{ route('admin.scholarship.export.excel') }}"
-           class="btn btn-outline-success btn-custom px-3">
-            <i class="bi bi-file-earmark-excel-fill me-1"></i> Export Excel
+        <a href="{{ url()->previous() }}" class="btn btn-light btn-sm fw-semibold">
+            <i class="bi bi-arrow-left"></i> Kembali
         </a>
     </div>
 
-    {{-- ALERT SUKSES --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    @if(session('success'))
+        <div class="alert alert-success glass border-0 mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill"></i>
+                <div class="fw-semibold">{{ session('success') }}</div>
+            </div>
         </div>
     @endif
 
-    {{-- TABEL --}}
-    <div class="card card-glass border-0">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Pendaftar</th>
-                            <th>Kampus</th>
-                            <th>Program Studi</th>
-                            <th>Dokumen</th>
-                            <th>Status</th>
-                            <th class="text-center" style="width: 150px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($applications as $index => $item)
-                            <tr>
-                                <td>{{ $applications->firstItem() + $index }}</td>
-                                <td>{{ $item->user->name ?? $item->nama_pendaftar ?? '-' }}</td>
-                                <td>{{ $item->campus ?? '-' }}</td>
-                                <td>{{ $item->program_studi ?? '-' }}</td>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="stat-title">Disetujui</p><span class="stat-chip">Approved</span>
+                </div>
+                <p class="stat-value">{{ $countApproved }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="stat-title">Ditolak</p><span class="stat-chip">Rejected</span>
+                </div>
+                <p class="stat-value">{{ $countRejected }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="stat-title">Ditunda</p><span class="stat-chip">On Hold</span>
+                </div>
+                <p class="stat-value">{{ $countHold }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="stat-title">Pending</p><span class="stat-chip">Pending</span>
+                </div>
+                <p class="stat-value">{{ $countPending }}</p>
+            </div>
+        </div>
+    </div>
 
-                                {{-- Dokumen --}}
-                                <td>
-                                    @if ($item->dokumen)
-                                        <a href="{{ asset('storage/' . $item->dokumen) }}"
-                                           target="_blank"
-                                           class="btn btn-sm btn-outline-primary btn-custom px-3 py-1"
-                                           data-bs-toggle="tooltip"
-                                           title="Lihat Dokumen">
-                                           <i class="bi bi-file-earmark-text"></i> Lihat
-                                        </a>
-                                    @else
-                                        <span class="text-muted fst-italic">Tidak ada</span>
-                                    @endif
-                                </td>
+    <div class="glass p-3 mb-3">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-0" style="border-radius:14px 0 0 14px;">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control control border-0"
+                           placeholder="Cari nama / email / kampus..." style="border-radius:0 14px 14px 0;">
+                </div>
+                <div class="muted mt-1">Pencarian hanya di halaman ini.</div>
+            </div>
 
-                                {{-- Status --}}
-                                <td>
-                                    @switch($item->status)
-                                        @case('approved')
-                                            <span class="badge bg-success">Disetujui</span>
-                                            @break
-                                        @case('rejected')
-                                            <span class="badge bg-danger">Ditolak</span>
-                                            @break
-                                        @case('on hold')
-                                            <span class="badge bg-warning text-dark">Ditunda</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-secondary">Pending</span>
-                                    @endswitch
-                                </td>
+            <div class="col-md-3">
+                <select id="statusFilter" class="form-select control">
+                    <option value="">Semua Status</option>
+                    <option value="approved">Disetujui</option>
+                    <option value="rejected">Ditolak</option>
+                    <option value="on hold">Ditunda</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
 
-                                {{-- Aksi --}}
-                                <td class="text-center">
-                                    <a href="{{ route('admin.scholarship.show', $item->id) }}"
-                                       class="btn btn-sm btn-info text-white btn-custom me-1"
-                                       data-bs-toggle="tooltip" title="Lihat Detail">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <form action="{{ route('admin.scholarship.destroy', $item->id) }}"
-                                          method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
+            <div class="col-md-4 d-flex justify-content-md-end gap-2">
+                <button id="resetFilter" type="button" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-x-circle"></i> Reset
+                </button>
+                <span class="btn btn-primary btn-sm disabled">
+                    Total: {{ $applications->total() }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass">
+        <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="fw-bold text-dark">
+                <i class="bi bi-table me-1"></i> Data Pendaftar
+            </div>
+            <div class="muted">
+                Menampilkan {{ $applications->count() }} dari {{ $applications->total() }} data
+            </div>
+        </div>
+
+        <div class="table-responsive table-wrap">
+            <table class="table align-middle mb-0" id="appsTable">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">No</th>
+                        <th>Nama Lengkap</th>
+                        <th>Email</th>
+                        <th>Kampus</th>
+                        <th>Status</th>
+                        <th class="text-end" style="width:170px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($applications as $index => $item)
+                        @php
+                            $statusKey = strtolower(trim($item->status ?? 'pending'));
+
+                            $isPending = !in_array($statusKey, ['approved','rejected','on hold'], true);
+
+                            $badgeClass = $statusKey === 'approved' ? 'st-approved'
+                                : ($statusKey === 'rejected' ? 'st-rejected'
+                                : ($statusKey === 'on hold' ? 'st-hold' : 'st-pending'));
+
+                            $statusLabel = $statusKey === 'approved' ? 'Disetujui'
+                                : ($statusKey === 'rejected' ? 'Ditolak'
+                                : ($statusKey === 'on hold' ? 'Ditunda' : 'Pending'));
+
+                            $filterValue = $isPending ? 'pending' : $statusKey;
+                        @endphp
+
+                        <tr data-status="{{ $filterValue }}">
+                            <td class="muted">{{ $applications->firstItem() + $index }}</td>
+
+                            <td>
+                                <div class="fw-semibold">{{ $item->full_name }}</div>
+                                <div class="muted">ID: #{{ $item->id }}</div>
+                            </td>
+
+                            <td>
+                                <div class="fw-semibold">{{ $item->email }}</div>
+                                <div class="muted">Terdaftar: {{ optional($item->created_at)->format('d M Y') }}</div>
+                            </td>
+
+                            <td class="muted">{{ $item->campus ?? '-' }}</td>
+
+                            <td>
+                                <span class="badge-soft {{ $badgeClass }}">
+                                    {{ $statusLabel }}
+                                </span>
+                            </td>
+
+                            {{-- AKSI: Detail, Edit, Hapus --}}
+                            <td class="text-end">
+                                <a href="{{ route('admin.scholarship.show', $item->id) }}"
+                                   class="btn btn-primary btn-sm btn-icon me-1"
+                                   title="Detail">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                <a href="{{ route('admin.scholarship.edit', $item->id) }}"
+                                   class="btn btn-warning btn-sm btn-icon me-1"
+                                   title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <form action="{{ route('admin.scholarship.destroy', $item->id) }}"
+                                      method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
                                             onclick="return confirm('Yakin ingin menghapus data ini?')"
-                                            class="btn btn-sm btn-danger btn-custom"
-                                            data-bs-toggle="tooltip" title="Hapus Data">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">
-                                    <i class="bi bi-emoji-frown fs-3"></i><br>
-                                    Belum ada data pendaftar beasiswa.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                            class="btn btn-danger btn-sm btn-icon"
+                                            title="Hapus">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-5">
+                                <div class="fw-semibold mb-1">Belum ada data pendaftar beasiswa</div>
+                                <div class="muted">Data akan muncul setelah user melakukan pengajuan.</div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-            {{-- PAGINATION --}}
-            <div class="mt-4 d-flex justify-content-center">
-                {{ $applications->links() }}
-            </div>
+        <div class="p-3 d-flex justify-content-center">
+            {{ $applications->links() }}
         </div>
     </div>
 </div>
 
 <script>
-    // Bootstrap tooltip
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-        new bootstrap.Tooltip(el);
-    });
+    (function () {
+        const searchInput  = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const resetBtn     = document.getElementById('resetFilter');
+        const rows         = document.querySelectorAll('#appsTable tbody tr');
 
-    // Toggle dark mode
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const icon = themeToggle.querySelector('i');
-        icon.classList.toggle('bi-sun');
-        icon.classList.toggle('bi-moon-stars');
-    });
+        function applyFilters(){
+            const q = (searchInput.value || '').toLowerCase().trim();
+            const st = (statusFilter.value || '').toLowerCase().trim();
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+
+                const matchText = !q || text.includes(q);
+                const matchStatus = !st || rowStatus === st;
+
+                row.style.display = (matchText && matchStatus) ? '' : 'none';
+            });
+        }
+
+        searchInput?.addEventListener('input', applyFilters);
+        statusFilter?.addEventListener('change', applyFilters);
+
+        resetBtn?.addEventListener('click', () => {
+            searchInput.value = '';
+            statusFilter.value = '';
+            applyFilters();
+        });
+    })();
 </script>
 @endsection

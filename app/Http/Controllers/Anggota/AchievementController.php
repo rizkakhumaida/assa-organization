@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Achievement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AchievementController extends Controller
 {
-    /**
-     * Daftar prestasi milik anggota yang login
-     */
     public function index()
     {
         $achievements = Achievement::where('user_id', Auth::id())
@@ -22,64 +20,78 @@ class AchievementController extends Controller
         return view('anggota.achievements.index', compact('achievements'));
     }
 
-    /**
-     * Proses penyimpanan formulir setor prestasi
-     */
+    public function create()
+    {
+        return view('anggota.achievements.create');
+    }
+
     public function store(Request $request)
     {
-        // VALIDASI: sesuaikan dengan name di form Blade
         $request->validate([
-            'fullName'    => 'required|string|max:255',
-            'school'      => 'required|string|max:255',
-            'nim'         => 'nullable|string|max:50',
-            'email'       => 'required|email|max:255',
-            'phone'       => 'required|string|max:20',
+            'fullName'   => 'required|string|max:255',
+            'school'     => 'required|string|max:255',
+            'nim'        => 'nullable|string|max:50',
+            'email'      => 'required|email|max:255',
+            'phone'      => 'required|string|max:20',
 
-            'title'       => 'required|string|max:255',
-            'level'       => 'required|string|max:100',
-            'category'    => 'required|string|max:100',
-            'date'        => 'required|date',
-            'description' => 'required|string',
+            'title'      => 'required|string|max:255',
+            'tingkat'    => 'required|string|max:100',
+            'kategori'   => 'required|string|max:100',
+            'date'       => 'required|date',
+            'description'=> 'required|string',
 
-            'certificate' => 'required|mimes:pdf,jpg,jpeg,png|max:10240', // sertifikat/piagam
-            'photo'       => 'nullable|mimes:jpg,jpeg,png|max:10240',      // foto opsional
+            // OPSI A:
+            // certificate = sertifikat/piagam (WAJIB)
+            // photo       = foto prestasi (OPSIONAL)
+            'certificate'=> 'required|mimes:pdf,jpg,jpeg,png|max:10240',
+            'photo'      => 'nullable|mimes:jpg,jpeg,png|max:10240',
         ]);
 
-        // ---------------- Upload Sertifikat (wajib) ----------------
+        // =========================
+        // HITUNG POIN DARI TINGKAT
+        // =========================
+        $tingkatPoint = [
+            'internasional'     => 50,
+            'nasional'          => 40,
+            'provinsi'          => 30,
+            'kabupaten/kota'    => 20,
+            'institusi/kampus'  => 10,
+        ];
+
+        $tingkatKey = strtolower(trim($request->tingkat));
+        $poin = $tingkatPoint[$tingkatKey] ?? 0;
+
+        // Upload sertifikat (WAJIB)
         $sertifikatPath = $request->file('certificate')
             ->store('prestasi/sertifikat', 'public');
 
-        // ---------------- Upload Foto (opsional) ----------------
+        // Upload foto (OPSIONAL)
         $fotoPath = null;
         if ($request->hasFile('photo')) {
             $fotoPath = $request->file('photo')
                 ->store('prestasi/foto', 'public');
         }
 
-        // ---------------- Simpan ke Database ----------------
         $prestasi = Achievement::create([
             'user_id'      => Auth::id(),
-
-            // biodata peserta
             'peserta'      => $request->fullName,
             'asal_sekolah' => $request->school,
             'nim'          => $request->nim,
             'email'        => $request->email,
             'phone'        => $request->phone,
 
-            // data prestasi
-            'prestasi'     => $request->title,
-            'tingkat'      => $request->level,
-            'kategori'     => $request->category,
-            'tahun'        => $request->date,          // kolom bertipe date
-            'deskripsi'    => $request->description,
+            'prestasi'  => $request->title,
+            'tingkat'   => $request->tingkat,
+            'kategori'  => $request->kategori,
+            'tahun'     => $request->date,
+            'deskripsi' => $request->description,
 
-            // file & status
-            'poin'         => 0,
-            'sertifikat'   => $sertifikatPath,
-            'certificate'  => $fotoPath,
-            'status'       => 'Pending',               // sesuai enum di migration
-            'aksi'         => '-',
+            'poin'       => $poin,                // ✅ otomatis, tidak kosong
+            'sertifikat' => $sertifikatPath,      // ✅ sertifikat/piagam
+            'certificate'=> $fotoPath,            // ✅ foto (boleh NULL)
+
+            'status' => 'Pending',
+            'aksi'   => 'Approve / Reject',        // ✅ SESUAI PERMINTAAN
         ]);
 
         return redirect()
@@ -87,14 +99,36 @@ class AchievementController extends Controller
             ->with('success', 'Prestasi berhasil disetor!');
     }
 
-    /**
-     * Detail satu prestasi milik anggota yang login
-     */
     public function show($id)
     {
-        $data = Achievement::where('user_id', Auth::id())
-            ->findOrFail($id);
-
+        $data = Achievement::where('user_id', Auth::id())->findOrFail($id);
         return view('anggota.achievements.show', compact('data'));
+    }
+
+    public function preview($id)
+    {
+        $achievement = Achievement::where('user_id', Auth::id())->findOrFail($id);
+
+        if (!Storage::disk('public')->exists($achievement->sertifikat)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file(
+            Storage::disk('public')->path($achievement->sertifikat)
+        );
+    }
+
+    public function download($id)
+    {
+        $achievement = Achievement::where('user_id', Auth::id())->findOrFail($id);
+
+        if (!Storage::disk('public')->exists($achievement->sertifikat)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->download(
+            $achievement->sertifikat,
+            'Bukti_Prestasi_'.$achievement->peserta.'.'.pathinfo($achievement->sertifikat, PATHINFO_EXTENSION)
+        );
     }
 }

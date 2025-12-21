@@ -2,135 +2,190 @@
 
 @section('content')
 <style>
-    /* 🌈 Tampilan Modern + Glassmorphism */
     body {
-        background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+        font-family: 'Poppins', sans-serif;
     }
 
-    .detail-card {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(16px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        padding: 2rem;
+    .page-header {
+        background: linear-gradient(90deg, #1e40af, #2563eb);
+        border-radius: 14px;
+        padding: 18px 22px;
+        color: #ffffff;
+        box-shadow: 0 10px 25px rgba(37,99,235,.35);
     }
 
-    .detail-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    .glass-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(18px);
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,.4);
+        box-shadow: 0 15px 40px rgba(0,0,0,.12);
+        padding: 2.2rem;
     }
 
-    .gradient-title {
-        background: linear-gradient(90deg, #4f46e5, #7c3aed);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .section-title {
+        font-weight: 700;
+        color: #4338ca;
+        margin-bottom: .75rem;
     }
 
     .info-label {
+        font-size: .85rem;
         font-weight: 600;
-        color: #4f46e5;
+        color: #6366f1;
     }
 
     .info-value {
-        color: #374151;
+        font-weight: 500;
+        color: #1f2937;
     }
 
-    .btn-modern {
-        border-radius: 10px;
-        transition: all 0.2s ease-in-out;
+    .doc-card {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: .75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        border: 1px solid #e5e7eb;
+        transition: .25s;
     }
 
-    .btn-modern:hover {
-        transform: scale(1.05);
+    .doc-card:hover {
+        background: #eef2ff;
+        transform: translateY(-2px);
+    }
+
+    .doc-icon {
+        font-size: 1.4rem;
+        color: #4f46e5;
     }
 
     .badge {
-        padding: 0.5em 0.8em;
-        font-size: 0.9rem;
-        border-radius: 8px;
-        text-transform: capitalize;
-    }
-
-    .fade-in {
-        animation: fadeIn 0.7s ease-in-out both;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        padding: .45em .9em;
+        border-radius: 12px;
+        font-size: .85rem;
     }
 </style>
 
-<div class="container py-5 fade-in">
-    {{-- 🌟 Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h3 class="fw-bold gradient-title">
-            <i class="bi bi-award me-2"></i> Detail Pengajuan Beasiswa
-        </h3>
-        <a href="{{ route('admin.scholarship.index') }}" class="btn btn-outline-primary btn-modern">
-            <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+<div class="container py-5">
+
+    {{-- HEADER --}}
+    <div class="page-header mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-0 fw-bold">Detail Pengajuan Beasiswa</h4>
+            <small>ASSA Organization</small>
+        </div>
+        <a href="{{ route('admin.scholarship.index') }}" class="btn btn-light btn-sm fw-semibold">
+            <i class="bi bi-arrow-left"></i> Kembali
         </a>
     </div>
 
-    {{-- 💎 Kartu Detail --}}
-    <div class="detail-card">
-        <div class="d-flex align-items-center mb-4">
-            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                <i class="bi bi-person-circle text-primary fs-2"></i>
+    <div class="glass-card">
+
+        {{-- IDENTITAS --}}
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                <i class="bi bi-person-circle fs-2 text-primary"></i>
             </div>
             <div>
-                <h4 class="fw-bold text-dark mb-0">{{ $scholarship->nama_pendaftar }}</h4>
-                <small class="text-muted">Pendaftar Beasiswa</small>
+                <h4 class="fw-bold mb-0">{{ $scholarship->full_name }}</h4>
+                <small class="text-muted">{{ $scholarship->email }}</small>
             </div>
         </div>
 
-        <hr class="mb-4">
+        <hr>
 
-        <div class="row g-4">
-            <div class="col-md-6">
-                <p class="info-label">🏫 Kampus</p>
-                <p class="info-value">{{ $scholarship->campus ?? '-' }}</p>
+        {{-- INFO --}}
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="info-label">Kampus</div>
+                <div class="info-value">{{ $scholarship->campus ?? '-' }}</div>
             </div>
 
-            <div class="col-md-6">
-                <p class="info-label">🎓 Program Studi</p>
-                <p class="info-value">{{ $scholarship->program_studi ?? '-' }}</p>
+            <div class="col-md-4">
+                <div class="info-label">Tanggal Pengajuan</div>
+                <div class="info-value">
+                    {{ optional($scholarship->created_at)->format('d M Y, H:i') }}
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <p class="info-label">📅 Tanggal Pengajuan</p>
-                <p class="info-value">
-                    {{ \Carbon\Carbon::parse($scholarship->tanggal_pengajuan)->format('d M Y') }}
-                </p>
-            </div>
-
-            <div class="col-md-6">
-                <p class="info-label">📋 Status</p>
+            <div class="col-md-4">
+                <div class="info-label">Status</div>
                 <span class="badge
-                    @if($scholarship->status == 'approved') bg-success
-                    @elseif($scholarship->status == 'rejected') bg-danger
-                    @elseif($scholarship->status == 'on hold') bg-warning text-dark
+                    @if(strtolower($scholarship->status) === 'approved') bg-success
+                    @elseif(strtolower($scholarship->status) === 'rejected') bg-danger
+                    @elseif(strtolower($scholarship->status) === 'on hold') bg-warning text-dark
                     @else bg-secondary @endif">
-                    {{ ucfirst($scholarship->status) }}
+                    {{ strtoupper($scholarship->status) }}
                 </span>
             </div>
+        </div>
 
-            {{-- Dokumen Pendukung --}}
-            <div class="col-12 mt-3">
-                <p class="info-label">📎 Dokumen Pendukung</p>
-                @if($scholarship->dokumen_pendukung)
-                    <a href="{{ asset('storage/' . $scholarship->dokumen_pendukung) }}"
-                       target="_blank"
-                       class="btn btn-outline-primary btn-modern">
-                        <i class="bi bi-file-earmark-pdf"></i> Lihat Dokumen
-                    </a>
-                @else
-                    <p class="text-muted fst-italic">Tidak ada dokumen yang diunggah.</p>
+        {{-- ALASAN --}}
+        <div class="mb-4">
+            <p class="section-title">Alasan Pengajuan</p>
+            <p class="text-muted lh-lg">{{ $scholarship->reason }}</p>
+        </div>
+
+        {{-- DOKUMEN --}}
+        <div>
+            <p class="section-title">Dokumen Pendukung</p>
+
+            @php
+                $docs = [
+                    'KTP' => ['path' => $scholarship->file_ktp, 'type' => 'ktp'],
+                    'KK' => ['path' => $scholarship->file_kk, 'type' => 'kk'],
+                    'Ijazah / Transkrip' => ['path' => $scholarship->file_ijazah_transkrip, 'type' => 'ijazah'],
+                    'KIP / PKH' => ['path' => $scholarship->file_kip_pkh, 'type' => 'kip'],
+                    'SKTM' => ['path' => $scholarship->file_sktm, 'type' => 'sktm'],
+                    'Prestasi' => ['path' => $scholarship->file_prestasi, 'type' => 'prestasi'],
+                ];
+            @endphp
+
+            <div class="row g-3">
+                @php $hasDoc = false; @endphp
+
+                @foreach ($docs as $label => $doc)
+                    @if ($doc['path'])
+                        @php $hasDoc = true; @endphp
+                        <div class="col-md-4 col-lg-3">
+                            <div class="doc-card">
+
+                                {{-- PREVIEW --}}
+                                <a href="{{ asset('storage/'.$doc['path']) }}"
+                                   target="_blank"
+                                   class="text-decoration-none d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-pdf doc-icon"></i>
+                                    <div>
+                                        <div class="fw-semibold text-dark">{{ $label }}</div>
+                                        <small class="text-muted">Buka dokumen</small>
+                                    </div>
+                                </a>
+
+                                {{-- FORCE DOWNLOAD --}}
+                                <a href="{{ route('admin.scholarship.download', [
+                                        'id' => $scholarship->id,
+                                        'type' => $doc['type']
+                                    ]) }}"
+                                   class="btn btn-sm btn-outline-primary rounded-circle"
+                                   title="Download {{ $label }}">
+                                    <i class="bi bi-download"></i>
+                                </a>
+
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+
+                @if (!$hasDoc)
+                    <p class="text-muted fst-italic">Tidak ada dokumen diunggah.</p>
                 @endif
             </div>
         </div>
+
     </div>
 </div>
 @endsection

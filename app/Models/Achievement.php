@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Achievement extends Model
 {
@@ -23,16 +24,16 @@ class Achievement extends Model
         'tahun',         // tanggal prestasi (date)
         'deskripsi',     // deskripsi singkat prestasi
 
-        'poin',          // poin—dipakai admin untuk scoring
+        'poin',          // poin otomatis dari tingkat (atau dipakai admin)
         'sertifikat',    // path file sertifikat/piagam
-        'certificate',   // path foto prestasi (opsional)
+        'foto',          // path foto prestasi (opsional) ✅ versi A
 
         'status',        // Verified / Pending / Rejected
         'aksi',          // kolom aksi (opsional)
     ];
 
     protected $casts = [
-        'tahun' => 'date',  // otomatis menjadi Carbon instance
+        'tahun' => 'date',
     ];
 
     /**

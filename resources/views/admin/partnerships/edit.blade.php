@@ -26,18 +26,23 @@
                     value="{{ $proposal->organization_name }}" readonly>
             </div>
 
-            {{-- Jenis Kerjasama --}}
+            {{-- Jenis Kerjasama (PAKAI cooperation_type SESUAI INDEX) --}}
             <div class="mb-4">
                 <label class="form-label fw-semibold text-secondary">
                     <i class="bi bi-diagram-3 me-2 text-primary"></i> Jenis Kerjasama
                 </label>
-                <select name="jenis_kerjasama" class="form-select form-select-lg rounded-3 shadow-sm" required>
-                    <option value="Pendidikan" {{ $proposal->cooperation_type == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
-                    <option value="Penelitian" {{ $proposal->cooperation_type == 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
-                    <option value="Pengabdian" {{ $proposal->cooperation_type == 'Pengabdian' ? 'selected' : '' }}>Pengabdian</option>
-                    <option value="Magang" {{ $proposal->cooperation_type == 'Magang' ? 'selected' : '' }}>Magang</option>
-                    <option value="CSR" {{ $proposal->cooperation_type == 'CSR' ? 'selected' : '' }}>CSR</option>
-                    <option value="Lainnya" {{ $proposal->cooperation_type == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+
+                @php
+                    $jenisList = ['Beasiswa','Sponsorship','Kegiatan','Seminar','Event','Penelitian','Magang','Lainnya'];
+                    $selectedJenis = old('cooperation_type', $proposal->cooperation_type);
+                @endphp
+
+                <select name="cooperation_type" class="form-select form-select-lg rounded-3 shadow-sm" required>
+                    @foreach ($jenisList as $j)
+                        <option value="{{ $j }}" {{ $selectedJenis === $j ? 'selected' : '' }}>
+                            {{ $j }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -60,7 +65,7 @@
                 <label class="form-label fw-semibold text-secondary">
                     <i class="bi bi-journal-text me-2 text-primary"></i> Catatan
                 </label>
-                <textarea name="notes" class="form-control form-control-lg rounded-3 shadow-sm" rows="4">{{ $proposal->notes }}</textarea>
+                <textarea name="notes" class="form-control form-control-lg rounded-3 shadow-sm" rows="4">{{ old('notes', $proposal->notes) }}</textarea>
             </div>
 
             {{-- Tombol Aksi --}}

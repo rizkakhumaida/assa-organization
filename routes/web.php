@@ -39,8 +39,15 @@ Route::middleware(['auth', 'role:admin'])
 
         // Beasiswa
         Route::resource('scholarship', AdminScholarshipApplicationController::class);
+
+        // EXPORT DATA
         Route::get('scholarship/export/pdf', [AdminScholarshipApplicationController::class, 'exportPDF'])->name('scholarship.export.pdf');
         Route::get('scholarship/export/excel', [AdminScholarshipApplicationController::class, 'exportExcel'])->name('scholarship.export.excel');
+
+        // ==========================
+        // DOWNLOAD DOKUMEN PENDUKUNG
+        // ==========================
+        Route::get('scholarship/{id}/download/{type}', [AdminScholarshipApplicationController::class, 'download'])->name('scholarship.download');
 
         // Kemitraan
         Route::resource('partnerships', AdminPartnershipProposalController::class);
@@ -62,10 +69,16 @@ Route::middleware(['auth', 'role:anggota'])
     ->prefix('anggota')
     ->name('anggota.')
     ->group(function () {
+        
+        // -------------------------------------------------------------
+        // DASHBOARD
+        // -------------------------------------------------------------
         Route::get('/dashboard', [AnggotaDashboardController::class, 'index'])->name('dashboard');
 
         // -------------------------------------------------------------
         // KEGIATAN
+        // URL  : /anggota/activities
+        // NAME : anggota.activities.*
         // -------------------------------------------------------------
         Route::get('activities/{activity}/create', [AnggotaActivityController::class, 'create'])->name('activities.create');
 
@@ -74,41 +87,46 @@ Route::middleware(['auth', 'role:anggota'])
         Route::resource('activities', AnggotaActivityController::class)->only(['index', 'show']);
 
         // -------------------------------------------------------------
-        // BEASISWA (Scholarship)
+        // BEASISWA
+        // URL  : /anggota/scholarship
+        // NAME : anggota.scholarship.*
         // -------------------------------------------------------------
-        // Form apply (halaman utama)
         Route::get('scholarship', [AnggotaScholarshipApplicationController::class, 'index'])->name('scholarship.index');
 
-        // Submit form
         Route::post('scholarship/store', [AnggotaScholarshipApplicationController::class, 'store'])->name('scholarship.store');
 
+        // -------------------------------------------------------------
         // KEMITRAAN
-        // Halaman index (daftar atau form awal)
-    Route::get('partnerships', [AnggotaPartnershipProposalController::class, 'index'])
-        ->name('partnerships.index');
+        // URL  : /anggota/partnerships
+        // NAME : anggota.partnerships.*
+        // -------------------------------------------------------------
+        Route::get('partnerships', [AnggotaPartnershipProposalController::class, 'index'])->name('partnerships.index');
 
-    // Simpan pengajuan kerjasama (POST)
-    Route::post('partnerships', [AnggotaPartnershipProposalController::class, 'store'])
-        ->name('partnerships.store');
+        Route::post('partnerships', [AnggotaPartnershipProposalController::class, 'store'])->name('partnerships.store');
 
-    // Daftar proposal saya
-    Route::get('partnerships/my-proposals', [AnggotaPartnershipProposalController::class, 'myProposals'])
-        ->name('partnerships.my_proposals');
+        Route::get('partnerships/my-proposals', [AnggotaPartnershipProposalController::class, 'myProposals'])->name('partnerships.my_proposals');
 
-    // Download file proposal
-    Route::get('partnerships/download/{proposal}', [AnggotaPartnershipProposalController::class, 'downloadFile'])
-        ->name('partnerships.download');
+        Route::get('partnerships/download/{proposal}', [AnggotaPartnershipProposalController::class, 'downloadFile'])->name('partnerships.download');
 
         // -------------------------------------------------------------
-        // PRESTASI
+        // PRESTASI ANGGOTA
+        // URL  : /anggota/prestasi
+        // NAME : anggota.achievements.*
         // -------------------------------------------------------------
         Route::prefix('prestasi')
             ->name('achievements.')
             ->group(function () {
                 Route::get('/', [AnggotaAchievementController::class, 'index'])->name('index');
+
                 Route::get('/create', [AnggotaAchievementController::class, 'create'])->name('create');
-                Route::post('/store', [AnggotaAchievementController::class, 'store'])->name('store');
-                Route::get('/show/{id}', [AnggotaAchievementController::class, 'show'])->name('show');
+
+                Route::post('/', [AnggotaAchievementController::class, 'store'])->name('store');
+
+                Route::get('/{id}', [AnggotaAchievementController::class, 'show'])->name('show');
+
+                Route::get('/{id}/preview', [AnggotaAchievementController::class, 'preview'])->name('preview');
+
+                Route::get('/{id}/download', [AnggotaAchievementController::class, 'download'])->name('download');
             });
 
         // -------------------------------------------------------------
